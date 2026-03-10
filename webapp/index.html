@@ -66,8 +66,13 @@
     </div>
 
     <!-- CONFIGURATION -->
-    <!-- Uncomment and set this to your cloud SyncServer URL if deploying frontend separately -->
-    <script>window.SYNC_SERVER_URL = "https://topspin-syncserver-890049860269.us-central1.run.app";</script>
+    <!-- Set this to your CommandsQueue URL if deploying frontend separately -->
+    <!-- Otherwise it uses the default localhost or dynamically injected URL from the script -->
+    <script>
+        // Set this explicitly when deploying to separate machines!
+        // Example: window.COMMANDS_QUEUE_URL = "http://192.168.1.100:3000";
+        window.COMMANDS_QUEUE_URL = "http://localhost:3000";
+    </script>
 
     <script src="app.js"></script>
 </body>

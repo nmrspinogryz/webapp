@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ---- CONFIGURATION ----
-    // Set this strictly when deploying the WebApp to point to an external SyncServer.
+    // Set this strictly when deploying the WebApp to point to an external CommandsQueue.
     // If running from the same server, leave it as an empty string. 
-    // Example: const SYNC_SERVER_URL = 'https://my-sync-server.cloud.com';
-    const SYNC_SERVER_URL = window.SYNC_SERVER_URL || '';
+    // Example: const COMMANDS_QUEUE_URL = 'https://my-commands-queue.cloud.com';
+    const COMMANDS_QUEUE_URL = window.COMMANDS_QUEUE_URL || '';
     // -----------------------
 
     const form = document.getElementById('command-form');
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         responseText.style.color = '';
 
         try {
-            const res = await fetch(`${SYNC_SERVER_URL}/command`, {
+            const res = await fetch(`${COMMANDS_QUEUE_URL}/command`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

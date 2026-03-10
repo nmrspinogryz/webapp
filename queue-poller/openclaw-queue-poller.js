@@ -1,18 +1,23 @@
 const { execFile } = require('child_process');
 
-// Determine the URL of the SyncServer
-const SYNC_SERVER_URL = process.env.SYNC_URL || 'http://localhost:3000';
+// Determine the URL of the CommandsQueue
+const COMMANDS_QUEUE_URL = process.env.COMMANDS_QUEUE_URL;
+
+if (!COMMANDS_QUEUE_URL) {
+    console.error("Error: COMMANDS_QUEUE_URL environment variable is not set.");
+    process.exit(1);
+}
 const POLL_INTERVAL_MS = 2000;
 
-console.log(`Starting OpenClaw Worker Daemon...`);
-console.log(`Configured to poll SyncServer at: ${SYNC_SERVER_URL}`);
+console.log(`Starting OpenclawQueuePoller Daemon...`);
+console.log(`Configured to poll CommandsQueue at: ${COMMANDS_QUEUE_URL}`);
 
 async function pollForCommands() {
     try {
-        const res = await fetch(`${SYNC_SERVER_URL}/worker/poll`);
+        const res = await fetch(`${COMMANDS_QUEUE_URL}/openclaw-queue-poller/poll`);
 
         if (!res.ok) {
-            console.error(`[Worker] Failed polling server. Status: ${res.status}`);
+            console.error(`[OpenclawQueuePoller] Failed polling server. Status: ${res.status}`);
             return scheduleNextPoll();
         }
 
@@ -24,7 +29,7 @@ async function pollForCommands() {
         }
 
         const { id, command } = data;
-        console.log(`\n[Worker] Picked up Command [${id}]: "${command}"`);
+        console.log(`\n[OpenclawQueuePoller] Picked up Command [${id}]: "${command}"`);
 
         // Execute the command
         executeOpenClawCommand(id, command);
@@ -35,13 +40,13 @@ async function pollForCommands() {
         // we'll wait until execution finishes before polling again. You can parallelize this if needed.
 
     } catch (e) {
-        console.error(`[Worker] Polling error (Server offline?):`, e.message);
+        console.error(`[OpenclawQueuePoller] Polling error (Server offline?):`, e.message);
         scheduleNextPoll();
     }
 }
 
 function executeOpenClawCommand(id, command) {
-    console.log(`[Worker] Executing engine CLI for [${id}]...`);
+    console.log(`[OpenclawQueuePoller] Executing engine CLI for [${id}]...`);
 
     execFile('openclaw', ['agent', '--agent', 'main', '--message', command, '--json'], { maxBuffer: 1024 * 1024 * 10 }, async (error, stdout, stderr) => {
 
@@ -53,7 +58,7 @@ function executeOpenClawCommand(id, command) {
         };
 
         if (error) {
-            console.error(`[Worker] CLI Execution Failed:`, error.message);
+            console.error(`[OpenclawQueuePoller] CLI Execution Failed:`, error.message);
             resultPayload.error = error.message;
             resultPayload.raw = stdout || stderr;
         } else {
@@ -77,33 +82,33 @@ function executeOpenClawCommand(id, command) {
                 }
 
             } catch (parseError) {
-                console.error(`[Worker] Output Parse Error:`, parseError.message);
+                console.error(`[OpenclawQueuePoller] Output Parse Error:`, parseError.message);
                 resultPayload.error = 'Failed to parse JSON engine output.';
                 resultPayload.raw = stdout;
             }
         }
 
-        // Return result to SyncServer
+        // Return result to CommandsQueue
         submitResult(resultPayload);
     });
 }
 
 async function submitResult(payload) {
     try {
-        console.log(`[Worker] Submitting result for [${payload.id}] back to SyncServer...`);
-        const res = await fetch(`${SYNC_SERVER_URL}/worker/result`, {
+        console.log(`[OpenclawQueuePoller] Submitting result for [${payload.id}] back to CommandsQueue...`);
+        const res = await fetch(`${COMMANDS_QUEUE_URL}/openclaw-queue-poller/result`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
         if (!res.ok) {
-            console.error(`[Worker] Failed to submit result. Status: ${res.status}`);
+            console.error(`[OpenclawQueuePoller] Failed to submit result. Status: ${res.status}`);
         } else {
-            console.log(`[Worker] Successfully returned result for [${payload.id}]`);
+            console.log(`[OpenclawQueuePoller] Successfully returned result for [${payload.id}]`);
         }
     } catch (e) {
-        console.error(`[Worker] Failed to connect to SyncServer to submit result:`, e.message);
+        console.error(`[OpenclawQueuePoller] Failed to connect to CommandsQueue to submit result:`, e.message);
     } finally {
         // Resume polling
         scheduleNextPoll();
