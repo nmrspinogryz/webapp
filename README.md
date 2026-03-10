@@ -21,3 +21,5 @@ cd webapp
 cd queue-poller
 ./run-poller.sh
 ```
+
+Then open http://localhost:8080/ to start sending commands.
