@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TopSpin Control</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Top command input section -->
+        <header class="glass-panel command-center">
+            <h1>TopSpin Command</h1>
+            <form id="command-form">
+                <div class="input-group">
+                    <input type="text" id="command-input" placeholder="Enter a command... (e.g. 'open trade history')"
+                        autocomplete="off" required>
+                    <button type="submit" id="submit-btn" aria-label="Send command">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Agent response display -->
+            <div id="response-area" class="response-hidden">
+                <p id="agent-response"></p>
+                <div class="loader-container">
+                    <div class="loader" id="loader"></div>
+                    <span class="loading-text">Agent is thinking...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main browser embedded section -->
+        <main class="glass-panel browser-view">
+            <div class="browser-header">
+                <div class="window-controls">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <span class="browser-title">TopSpin Live View</span>
+            </div>
+            <div class="iframe-container">
+                <!-- Fallback URL, typically this is where TopSpin screen feed goes -->
+                <iframe id="topspin-frame" src="about:blank" title="TopSpin Live Screen"></iframe>
+                <div class="iframe-placeholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" class="placeholder-icon">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke="currentColor" stroke-width="2">
+                        </rect>
+                        <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2"></line>
+                        <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2"></line>
+                    </svg>
+                    <p>Live Screen Feed Placeholder</p>
+                    <small>Configure the URL to show the TopSpin stream</small>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- CONFIGURATION -->
+    <!-- Uncomment and set this to your cloud SyncServer URL if deploying frontend separately -->
+    <script>window.SYNC_SERVER_URL = "https://topspin-syncserver-890049860269.us-central1.run.app";</script>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
