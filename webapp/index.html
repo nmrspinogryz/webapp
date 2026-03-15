@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TopSpin Control</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=5">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 
@@ -13,20 +13,24 @@
     <div class="app-container">
         <!-- Top command input section -->
         <header class="glass-panel command-center">
-            <h1>TopSpin Command</h1>
-            <form id="command-form">
-                <div class="input-group">
-                    <input type="text" id="command-input" placeholder="Enter a command... (e.g. 'open trade history')"
-                        autocomplete="off" required>
-                    <button type="submit" id="submit-btn" aria-label="Send command">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                    </button>
+            <div class="command-top-row">
+                <div class="header-title-container">
+                    <img src="logo.jpeg" alt="Company Logo" class="company-logo">
                 </div>
-            </form>
+                <form id="command-form">
+                    <div class="input-group">
+                        <input type="text" id="command-input" placeholder="Enter a command... (e.g. 'open TopSpin')"
+                            autocomplete="off" required>
+                        <button type="submit" id="submit-btn" aria-label="Send command">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
 
             <!-- Agent response display -->
             <div id="response-area" class="response-hidden">
@@ -49,6 +53,7 @@
                 <span class="browser-title">TopSpin Live View</span>
             </div>
             <div class="iframe-container">
+                <img id="live-screenshot" alt="Live Screen" style="display: none; width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; z-index: 20;">
                 <!-- Fallback URL, typically this is where TopSpin screen feed goes -->
                 <iframe id="topspin-frame" src="about:blank" title="TopSpin Live Screen"></iframe>
                 <div class="iframe-placeholder">
@@ -74,7 +79,7 @@
         window.COMMANDS_QUEUE_URL = "http://localhost:3000";
     </script>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=2"></script>
 </body>
 
 </html>

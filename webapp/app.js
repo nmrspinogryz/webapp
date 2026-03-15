@@ -82,4 +82,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 300);
         }
     });
+
+    // ---- SCREENSHOT POLLING ----
+    const liveScreenshot = document.getElementById('live-screenshot');
+    const iframePlaceholder = document.querySelector('.iframe-placeholder');
+    const topspinFrame = document.getElementById('topspin-frame');
+    
+    setInterval(() => {
+        const img = new Image();
+        const timestamp = new Date().getTime(); // Prevent caching
+        img.src = `screenshot.jpg?t=${timestamp}`;
+        
+        img.onload = () => {
+            liveScreenshot.src = img.src;
+            liveScreenshot.style.display = 'block';
+            iframePlaceholder.style.opacity = '0'; // Hide the SVG and text
+            topspinFrame.style.display = 'none'; // Hide the blank iframe
+        };
+        
+        img.onerror = () => {
+            // Revert to placeholder if file is not found
+            liveScreenshot.style.display = 'none';
+            iframePlaceholder.style.opacity = '1';
+            topspinFrame.style.display = 'block';
+        };
+    }, 2000); // Check every 2 seconds
 });
